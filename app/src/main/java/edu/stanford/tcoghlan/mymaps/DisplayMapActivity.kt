@@ -2,6 +2,7 @@ package edu.stanford.tcoghlan.mymaps
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -13,6 +14,15 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import edu.stanford.tcoghlan.mymaps.databinding.ActivityDisplayMapBinding
 import edu.stanford.tcoghlan.mymaps.models.UserMap
+import android.os.SystemClock
+
+import android.view.animation.BounceInterpolator
+import android.view.animation.Interpolator
+
+import com.google.android.gms.maps.model.Marker
+
+
+
 
 private const val TAG = "DisplayMapActivity"
 class DisplayMapActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -54,9 +64,42 @@ class DisplayMapActivity : AppCompatActivity(), OnMapReadyCallback {
         for (place in userMap.places){
             val latLng = LatLng(place.latitude, place.longitude)
             boundsBuilder.include(latLng)
-            mMap.addMarker(MarkerOptions().position(latLng).title(place.title).snippet(place.description))
+            val marker = mMap.addMarker(MarkerOptions().position(latLng).title(place.title).snippet(place.description))
+            dropPinEffect(marker)
         }
         // move the camera
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 1000, 1000, 0))
     }
+}
+
+private fun dropPinEffect(marker: Marker) {
+    // Handler allows us to repeat a code block after a specified delay
+    val handler = Handler()
+    val start = SystemClock.uptimeMillis()
+    val duration: Long = 1500
+
+    // Use the bounce interpolator
+    val interpolator: Interpolator = BounceInterpolator()
+
+    // Animate marker with a bounce updating its position every 15ms
+    handler.post(object : Runnable {
+        override fun run() {
+            val elapsed = SystemClock.uptimeMillis() - start
+            // Calculate t for bounce based on elapsed time
+            val t = Math.max(
+                1 - interpolator.getInterpolation(
+                    elapsed.toFloat()
+                            / duration
+                ), 0f
+            )
+            // Set the anchor
+            marker.setAnchor(0.5f, 1.0f + 14 * t)
+            if (t > 0.0) {
+                // Post this event again 15ms from now.
+                handler.postDelayed(this, 15)
+            } else { // done elapsing, show window
+                marker.showInfoWindow()
+            }
+        }
+    })
 }
