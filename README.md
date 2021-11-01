@@ -12,12 +12,11 @@ The following **required** functionality is completed:
 
 * [x] The list of map titles is displayed.
 * [x] After tapping on a map title, the associated markers in the map are shown.
-* [ ] The user is able to create a new map.
+* [x] The user is able to create a new map. 
 
 The following **extensions** are implemented:
 
-* [ ] When a map marker is created, the pin is animated.
-* [ ] List anything else that you did to improve the app functionality or design!
+* [x] When a map marker is created, the pin is animated.
 
 ## Video Walkthrough
 
@@ -29,7 +28,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+While the user is able to create a new map, the 'save' button is currently not functioning properly for unknown reasons. The user's newly made maps cannot be saved until bug is resolved.
 
 ## License
 
